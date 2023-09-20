@@ -1,0 +1,60 @@
+
+.home-container {
+    width: 100%;
+      height: 100vh; 
+      background-color: #d1ffd5; 
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+   
+    .home-title {
+      font-size: 2.5rem; 
+      margin-bottom: 1.5rem; 
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      color: #333; 
+    }
+    
+   
+    .home-description {
+      font-size: 1.4rem; 
+      margin-bottom: 2.5rem; 
+      color: #666; 
+    }
+   
+   
+  
+    .home-button {
+      font-size: 1.4rem;
+      margin: 0 1rem;
+      background-color: #ff6b6b; 
+      color: #fff; 
+      border: none; 
+      transition: background-color 0.3s ease; 
+    }
+  
+    .home-button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+  
+     .home-image {
+      width: 350px; 
+      max-height: 80vh; 
+      object-fit: contain; 
+      border-radius: 50%;
+      margin-bottom: 2rem; 
+    }
+    
+    .home-button:hover {
+      background-color: #ff4040; 
+    }
+    
+    
+    
+    
+    
