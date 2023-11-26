@@ -20,7 +20,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:5000/api/markdown/markdown-list')
+      .get('https://cpatone-backened.onrender.com/api/markdown/markdown-list')
       .then((response) => {
         setMarkdownList(response.data);
       })

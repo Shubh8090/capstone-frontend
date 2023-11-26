@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './Register.css';
 
 function Register() {
@@ -14,36 +16,79 @@ function Register() {
 
   const [formData, setFormData] = useState(initialFormData);
 
-  const [registrationStatus, setRegistrationStatus] = useState({
-    message: '',
-    isError: false,
-  });
+  const [isUsernameValid, setIsUsernameValid] = useState(true);
+  const [isPasswordValid, setIsPasswordValid] = useState(true);
+  const [isEmailValid, setIsEmailValid] = useState(true);
+  const [isMobileValid, setIsMobileValid] = useState(true);
+  //const [message, setMessage] = useState('');
 
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const showToastMessage = (message, type) => {
+    toast[type](message, {
+      position: toast.POSITION.BOTTOM_CENTER,
+    });
+  };
+
+  const handleName = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, username: value });
+    setIsUsernameValid(value.length !== 0);
+  };
+
+  const handlePassword = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, password: value });
+    setIsPasswordValid(value.length >= 6);
+  };
+
+  const handleEmail = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, email: value });
+    const emailPattern =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    setIsEmailValid(emailPattern.test(value));
+  };
+
+  const handleMobile = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, mobile: value });
+    setIsMobileValid(value.length === 10);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', formData);
-      setRegistrationStatus({ message: response.data.message, isError: false });
+      if (
+        formData.username.trim() !== '' &&
+        formData.password.trim() !== '' &&
+        formData.email.trim() !== '' &&
+        formData.mobile.trim() !== '' &&
+        isUsernameValid &&
+        isPasswordValid &&
+        isEmailValid &&
+        isMobileValid
+      ) {
+        const response = await axios.post(
+          'https://cpatone-backened.onrender.com/api/auth/register',
+          formData
+        );
+            
+        setFormData(initialFormData);
 
-      // Clear the form data after successful registration
-      setFormData(initialFormData);
-
-      setTimeout(() => {
-        navigate('/login');
-      }, 1000);
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
+        showToastMessage('Registration Successful', 'success');
+      } else {
+        showToastMessage('Please fill in all required fields', 'error');
+      }
     } catch (error) {
       console.error('Error registering:', error);
-      setRegistrationStatus({ message: 'Registration failed', isError: true });
+      showToastMessage('Registration failed. Please try again.', 'error');
     }
   };
 
   return (
-    <div className="container" style={{width:300}}>
+    <div className="container" style={{ width: 300 }}>
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -54,9 +99,11 @@ function Register() {
             id="username"
             name="username"
             value={formData.username}
-            onChange={handleInputChange}
+            onChange={handleName}
           />
         </div>
+        {!isUsernameValid && <div className="error">Please enter a username.</div>}
+
         <div className="form-group">
           <label htmlFor="password">Password</label>
           <input
@@ -65,9 +112,13 @@ function Register() {
             id="password"
             name="password"
             value={formData.password}
-            onChange={handleInputChange}
+            onChange={handlePassword}
           />
         </div>
+        {!isPasswordValid && (
+          <div className="error">Please enter a valid password (at least 6 characters).</div>
+        )}
+
         <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
@@ -76,9 +127,11 @@ function Register() {
             id="email"
             name="email"
             value={formData.email}
-            onChange={handleInputChange}
+            onChange={handleEmail}
           />
         </div>
+        {!isEmailValid && <div className="error">Please enter a valid email address.</div>}
+
         <div className="form-group">
           <label htmlFor="mobile">Mobile Number</label>
           <input
@@ -87,23 +140,20 @@ function Register() {
             id="mobile"
             name="mobile"
             value={formData.mobile}
-            onChange={handleInputChange}
+            onChange={handleMobile}
           />
         </div>
+        {!isMobileValid && (
+          <div className="error">Please enter a valid mobile number (10 digits).</div>
+        )}
+
         <div>
           <button type="submit" className="btn btn-primary">
             Register
           </button>
         </div>
       </form>
-
-      {registrationStatus.message && (
-        <div
-          style={{ color: registrationStatus.isError ? 'red' : 'green' }}
-        >
-          {registrationStatus.message}
-        </div>
-      )}
+      <ToastContainer />
     </div>
   );
 }

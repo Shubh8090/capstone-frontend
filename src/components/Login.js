@@ -1,40 +1,73 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function Login({ setIsLoggedIn }) {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     username: '',
     password: '',
-  });
+  };
 
-  const [loginMessage, setLoginMessage] = useState('');
+  const [formData, setFormData] = useState(initialFormData);
+  const [isPasswordValid, setIsPasswordValid] = useState(true);
+  const [isUsernameValid, setIsUsernameValid] = useState(true);
 
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const showToastMessage = (message, type) => {
+    toast[type](message, {
+      position: toast.POSITION.BOTTOM_CENTER,
+    });
+  };
+
+  const handleUsernameChange = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, username: value });
+    setIsUsernameValid(value.length !== 0);
+    
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, password: value });
+    setIsPasswordValid(value.length !== 0);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', formData);
+      if(
+        formData.username.trim() !== '' &&
+        formData.password.trim() !== '' &&
+        isUsernameValid &&
+        isPasswordValid 
+      ) {
+        const response = await axios.post(
+          'https://cpatone-backened.onrender.com/api/auth/login',
+          formData
+        );
 
-      if (response.data.message === 'Login successful') {
-        setLoginMessage('Login successful');
-        setIsLoggedIn(true);
-        navigate('/create');
-      } else {
-        setLoginMessage('Invalid username or password');
+        setFormData(initialFormData);
+
+        setTimeout(() => {
+          setIsLoggedIn(true);
+          navigate('/create');
+        }, 3000);
+        showToastMessage('Login successful', 'success');
+      }else {
+        showToastMessage('Please fill in all required fields', 'error');
       }
-    } catch (error) {
+     } catch (error) {
       console.error('Error logging in:', error);
-      setLoginMessage('User not found. Please register first.');
+      showToastMessage('Invalid username or password', 'error');
     }
   };
 
+
   return (
-    <div className="container" style={{width:300}}>
+    <div className="container" style={{ width: 300 }}>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -45,9 +78,10 @@ function Login({ setIsLoggedIn }) {
             id="username"
             name="username"
             value={formData.username}
-            onChange={handleInputChange}
+            onChange={handleUsernameChange}
           />
         </div>
+        {!isUsernameValid && <div className="error">Please enter a username.</div>}
         <div className="form-group">
           <label htmlFor="password">Password</label>
           <input
@@ -56,23 +90,21 @@ function Login({ setIsLoggedIn }) {
             id="password"
             name="password"
             value={formData.password}
-            onChange={handleInputChange}
+            onChange={handlePasswordChange}
           />
         </div>
+
+        {!isPasswordValid && (
+          <div className="error">Please Enter password.</div>
+        )}
+
         <div>
           <button type="submit" className="btn btn-primary">
             Login
           </button>
         </div>
       </form>
-
-      {loginMessage && (
-        <div
-          style={{ color: loginMessage === 'Login successful' ? 'green' : 'red' }}
-        >
-          {loginMessage}
-        </div>
-      )}
+      <ToastContainer />
     </div>
   );
 }
