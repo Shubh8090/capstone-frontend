@@ -9,7 +9,7 @@ function CreateMarkdown({ markdownList, setMarkdownList }) {
 
   const createMarkdown = () => {
     axios
-      .post('https://cpatone-backened.onrender.com/api/markdown/create-markdown', {
+      .post('https://mymarkdownapp.onrender.com/api/markdown/create-markdown', {
         content: newMarkdownContent
       })
       .then((response) => {

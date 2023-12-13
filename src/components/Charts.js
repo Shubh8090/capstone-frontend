@@ -15,7 +15,7 @@ function Chart() {
 
   const fetchData = () => {
     axios
-      .get('https://cpatone-backened.onrender.com/api/markdown/fetch-data')
+      .get('https://mymarkdownapp.onrender.com/api/markdown/fetch-data')
       .then((response) => {
         setData({
           totalMarkdowns: response.data.totalMarkdowns,

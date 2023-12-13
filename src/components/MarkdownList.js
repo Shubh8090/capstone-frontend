@@ -21,7 +21,7 @@ function MarkdownList({ markdownList, setMarkdownList }) {
 
   const handleSaveEdit = (id) => {
     axios
-      .put(`https://cpatone-backened.onrender.com/api/markdown/update-markdown/${id}`, { content: editedMarkdown })
+      .put(`https://mymarkdownapp.onrender.com/api/markdown/update-markdown/${id}`, { content: editedMarkdown })
       .then(() => {
         // Update the local state with the edited content
         setMarkdownList((prevList) =>
@@ -40,7 +40,7 @@ function MarkdownList({ markdownList, setMarkdownList }) {
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this Markdown content?')) {
       axios
-        .delete(`https://cpatone-backened.onrender.com/api/markdown/delete-markdown/${id}`)
+        .delete(`https://mymarkdownapp.onrender.com/api/markdown/delete-markdown/${id}`)
         .then(() => {
           // Remove the deleted content from the local state
           setMarkdownList((prevList) => prevList.filter((markdown) => markdown._id !== id));

@@ -68,7 +68,7 @@ function Register() {
         isMobileValid
       ) {
         const response = await axios.post(
-          'https://cpatone-backened.onrender.com/api/auth/register',
+          'https://mymarkdownapp.onrender.com/api/auth/register',
           formData
         );
             
